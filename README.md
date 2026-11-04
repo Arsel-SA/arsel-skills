@@ -4,8 +4,9 @@
 
 | Skill | Use it for |
 | --- | --- |
-| [`arsel`](skills/arsel/SKILL.md) | Server-side code against `api.arsel.sa`: transactional email, SMS, WhatsApp and push; events that trigger automations or count as conversions; contacts, lists, segments and campaigns; errors, rate limits and retries. |
+| [`arsel-api`](skills/arsel-api/SKILL.md) | Server-side code against `api.arsel.sa`: transactional email, SMS, WhatsApp and push; events that trigger automations or count as conversions; contacts, lists, segments and campaigns; errors, rate limits and retries. |
 | [`arsel-sdk`](skills/arsel-sdk/SKILL.md) | Adding Arsel to a website, Android app or iOS app: installing the SDK, tracking and identifying users, login and logout, and web push, FCM or APNs notifications. |
+| [`arsel-content`](skills/arsel-content/SKILL.md) | Writing what goes in the message: email templates, SMS text and WhatsApp templates, in Arabic, English or both. Merge tags, SMS parts and cost, Saudi sender and timing rules, and getting WhatsApp templates approved. |
 
 Each skill is a short `SKILL.md` plus reference files the agent reads only when a task needs them. They cover the parts of the API and SDKs that are easy to get wrong, and point to [docs.arsel.sa](https://docs.arsel.sa) for everything else.
 
@@ -20,7 +21,7 @@ Each skill is a short `SKILL.md` plus reference files the agent reads only when 
 
 **Other agents**
 
-Copy `skills/arsel` and `skills/arsel-sdk` into the directory your agent loads skills from, such as `.claude/skills/` in a project.
+Copy the folders under `skills/` into the directory your agent loads skills from, such as `.claude/skills/` in a project.
 
 ## Evals
 

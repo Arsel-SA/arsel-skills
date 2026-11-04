@@ -42,6 +42,14 @@ if (!res.ok) throw new Error(`${data.name}: ${data.message}`);
 
 Exactly one content source: `html` and/or `text`, **or** `template_id`.
 
+## Saved templates
+
+`POST /templates` (`name`, `html`) saves a template for `template_id` sends and campaigns. The HTML
+is sanitized. An "Unsubscribe" link pointing at your own URL is refused with `400`; use
+`{{unsubscribe_link}}` (Arsel's per-contact link). In campaigns the contact's name is
+`{{firstName}}`, not `{{first_name}}`. For writing the template itself, use the `arsel-content`
+skill.
+
 ## Limits that reject the whole request
 
 - `to` + `cc` + `bcc` ≤ **50** recipients. More → `400`. Split into several calls (or use a

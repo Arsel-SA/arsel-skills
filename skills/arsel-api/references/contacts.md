@@ -51,5 +51,6 @@ then `POST /email/campaigns` with `template_id`, `subject`, `from`, `from_name` 
 - Stats: `GET /email/campaigns/:id/stats`.
 - Campaign `status` values are **lowercase** on the wire: `draft`, `scheduled`, `queued`, `sending`,
   `paused`, `sent`, `failed`, `cancelled`, `archived` (some docs pages show them capitalized —
-  compare case-insensitively). A job that must not double-send should key on its own campaign
+  compare case-insensitively). The list endpoints' `status` filter accepts any casing, and email
+  and SMS lists accept `archived`. A job that must not double-send should key on its own campaign
   name/id and check status before calling send.

@@ -1,0 +1,72 @@
+{
+  "skill_name": "arsel-content",
+  "evals": [
+    {
+      "id": 1,
+      "name": "arabic-order-confirmation-sms-and-email",
+      "prompt": "We're a Riyadh e-commerce store on Arsel. Write the order-confirmation messages we send after checkout: an SMS and an email, both in Arabic, with the customer's first name, the order number, the total in SAR and a link to track the order. Give me the SMS text and the email HTML, and the code to send each through Arsel from our Node backend.",
+      "expected_output": "Arabic SMS kept short, with its UCS-2 part count stated, sent from a transactional sender via /sms/send; RTL email with LTR-isolated order number, amount and URL and an Arabic-capable font stack, sent via /email/send with the values in the request.",
+      "files": [],
+      "expectations": [
+        "States that the Arabic SMS is encoded as Unicode/UCS-2 (70 characters in one part, 67 per part when split) and gives the part count of the SMS it wrote",
+        "Keeps the SMS to at most 2 parts",
+        "Sends the SMS with POST /v1/sms/send from a transactional sender, not a promotional '-AD' sender",
+        "Sets dir=\"rtl\" and lang=\"ar\" on the email, and repeats the direction on inner containers (dir attribute or inline direction:rtl on tables/cells)",
+        "Wraps left-to-right fragments (order number, amount, URL or Latin text) in dir=\"ltr\", <bdi> or LRM marks",
+        "Uses a font stack with Arabic glyphs (e.g. Tahoma or Arial), not only a Latin web font",
+        "Sends the email with POST /v1/email/send, passing the order values in the request (inline or as variables) rather than expecting Arsel to fill them from the contact",
+        "Does not put a custom unsubscribe URL in the transactional email"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "bilingual-newsletter-template-via-api",
+      "prompt": "Create a reusable monthly newsletter email template for us in Arsel via the API — Arabic on top, English below, our logo, a greeting with the contact's first name, three product cards with buttons, and a footer with our address and an unsubscribe link. We'll launch campaigns from it in the dashboard.",
+      "expected_output": "POST /v1/templates with table-based, inline-styled HTML; Arabic block RTL and English block LTR; {{unsubscribe_link}} for the unsubscribe link; {{firstName}} if it greets by name; no reliance on Outlook conditional comments or tel: links.",
+      "files": [],
+      "expectations": [
+        "Creates the template with POST /v1/templates (name + html)",
+        "Uses {{unsubscribe_link}} for the unsubscribe link and no custom unsubscribe URL",
+        "Greets the contact with {{firstName}} (optionally with a |default), not {{first_name}} or another key that Arsel campaigns leave blank",
+        "Marks the Arabic section right-to-left (dir=\"rtl\" or direction:rtl) and the English section left-to-right",
+        "Does not rely on <!--[if mso]> conditional comments, or says Arsel strips them",
+        "Contains no <script> and no tel: links, or says tel: links are stripped",
+        "Uses a table-based layout with inline styles"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "white-friday-sms-campaign-cost",
+      "prompt": "We want to send a White Friday promo SMS in Arabic to our 120,000 contacts through Arsel: 'خصم ٤٠٪ على كل المنتجات 🔥 لمدة ٣ أيام فقط! تسوق الآن: https://shop.example.sa/white-friday?utm_source=sms&utm_campaign=wf26'. Our sender name is ExampleShop. Is this good to go? Roughly how many SMS parts will it cost us and what should we change?",
+      "expected_output": "Unicode (UCS-2) because of Arabic and emoji: 2 parts per recipient (about 240,000 billed parts for 120k), still 2 after Arsel shortens the link; promotional SMS in KSA needs a registered '-AD' sender (ExampleShop can't send it); add an opt-out line; drop the emoji; send in daytime KSA hours; opted-out contacts are skipped and DND numbers come back undelivered; offers a shorter rewrite.",
+      "files": [],
+      "expectations": [
+        "Says the message is Unicode/UCS-2 because of the Arabic text (70 characters single / 67 per part)",
+        "Estimates 2 parts per recipient, about 240,000 parts for 120,000 contacts",
+        "Counts the parts using Arsel's short tracked link (~20 characters) in place of the long URL, or explicitly says Arsel campaigns shorten links",
+        "Says promotional SMS in Saudi Arabia must come from a registered sender name ending in '-AD', so the plain ExampleShop sender cannot send it as is",
+        "Recommends adding an opt-out line",
+        "Recommends removing the emoji (it costs 2 characters and may not render)",
+        "Recommends sending during daytime hours in Saudi time (roughly 09:00 to 20:00 or 21:00)",
+        "Notes that fewer than 120,000 will receive it: contacts who opted out of SMS marketing are skipped, and numbers on operator do-not-disturb lists come back undelivered",
+        "Offers a rewritten message with its character count or part count"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "whatsapp-abandoned-cart-template-rejected",
+      "prompt": "Our WhatsApp template for abandoned carts keeps getting rejected or moved to marketing. We built it in Meta Business Manager as utility with the body '{{1}} you left items in your cart! Complete your order now and get 10% off with code {{2}} {{3}}'. We're moving to Arsel now and want to send it from our backend when a cart is abandoned. Fix it and give me the API calls to create it in Arabic and English.",
+      "expected_output": "Explains the discount makes it marketing; rewrites without a leading/trailing variable or adjacent variables; uses Arsel's named snake_case placeholders; creates one template per language with language 'ar' and 'en' via POST /v1/whatsapp/templates; explains a marketing template can't go out via POST /whatsapp/send and is sent from an automation or a dashboard campaign with marketing consent.",
+      "files": [],
+      "expectations": [
+        "Explains that the discount/offer makes it a marketing template, not utility",
+        "The rewritten body does not start or end with a placeholder and has no two placeholders side by side",
+        "Uses named lowercase snake_case placeholders such as {{first_name}} and {{discount_code}}, not {{1}}",
+        "Creates the templates with POST /v1/whatsapp/templates with name, language, category and Meta-format components (uppercase BODY)",
+        "Uses language code 'ar' for Arabic (not 'ar_SA') and creates a separate template per language",
+        "Explains that a marketing template cannot be sent with POST /whatsapp/send and must go out through an automation or a dashboard campaign, which check marketing consent",
+        "Suggests triggering the send from an Arsel event (e.g. cart.abandoned) feeding an automation, or otherwise gives a working send path"
+      ]
+    }
+  ]
+}

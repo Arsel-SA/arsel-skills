@@ -77,12 +77,16 @@ Before writing a backfill, tell the user what it will and won't do:
   conversion was enabled. Orders from before Arsel have no touch to credit, so they never show
   as revenue. Backfilled events still help segments ("ordered 3+ times", "last order before
   June") and contact history.
-- **Every live automation triggered by the event will fire.** Disable or pause those automations,
-  or the backfill messages every historic customer. There is no "don't trigger" flag on a send.
+- **Send `"backfill": true` on every historical event.** The event is recorded, creates its contact
+  and counts toward segments, but never starts or resumes an automation and is never credited as a
+  conversion. Without it, every live automation on that event fires for every historic customer.
+- An automation that starts when a contact **enters a segment** can still fire if the backfill moves
+  contacts into that segment. Check those before running it.
 - Contacts that don't exist yet are created for every identifier you send — import contacts first
   if consent or plan limits matter.
 - Set a cutoff so the backfill doesn't overlap events your live integration already sends, set
-  `timestamp` from the original time (with an explicit time zone), and checkpoint so a re-run
+  `timestamp` from the original time (with an explicit time zone; a time more than 5 minutes in the
+  future counts as arrival time), and checkpoint so a re-run
   resumes instead of re-sending — idempotency keys only last 24 h.
 
 If the real goal is "show customer history", per-contact properties (lifetime value, order count,

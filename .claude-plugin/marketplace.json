@@ -10,7 +10,7 @@
       "name": "arsel",
       "source": "./",
       "description": "Skills for building on Arsel: the server API and the web, Android and iOS SDKs",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }

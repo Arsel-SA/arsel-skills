@@ -1,10 +1,10 @@
 ---
-name: arsel
+name: arsel-api
 description: Use when writing server-side code against the Arsel API (api.arsel.sa) — sending transactional email, SMS, WhatsApp or push; sending product events that trigger automations or count as conversions; managing contacts, lists, tags and segments; launching campaigns; or handling Arsel errors, rate limits and retries. Use it whenever the user mentions Arsel, a `be_` API key, or api.arsel.sa, even for a "simple" send — the API has gotchas (required `from_name`, idempotency keys, events that must be defined before they are sent, 202 meaning queued, per-item batch results) that silently break integrations.
 license: MIT
 metadata:
   author: Arsel
-  version: "0.1.0"
+  version: "0.2.0"
   homepage: https://docs.arsel.sa
   source: https://github.com/Arsel-SA/arsel-skills
 inputs:

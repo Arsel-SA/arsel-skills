@@ -1,5 +1,5 @@
 {
-  "skill_name": "arsel",
+  "skill_name": "arsel-api",
   "evals": [
     {
       "id": 1,
@@ -39,7 +39,7 @@
       "id": 3,
       "name": "order-events-backfill",
       "prompt": "We just moved to Arsel and want revenue reporting to include our history. We have ~200k past orders in Postgres (table orders: id, user_id, email, total_sar numeric, created_at). Write a Node script that backfills them into Arsel as `order.completed` events so they show up as revenue.",
-      "expected_output": "Defines the event first with schema.fields and a conversion (value_field total, SAR) before sending, since conversions count go-forward; batches of up to 50; reads per-item results; sets timestamp to created_at; numeric total; external_id + email; paces by the 6,000 events/min budget with retry-after on 429; idempotency key per batch.",
+      "expected_output": "Defines the event first with schema.fields and a conversion (value_field total, SAR) before sending, since conversions count go-forward; batches of up to 50; reads per-item results; sets timestamp to created_at and backfill: true; numeric total; external_id + email; paces by the 6,000 events/min budget with retry-after on 429; idempotency key per batch.",
       "files": [],
       "expectations": [
         "Defines the order.completed event (POST /v1/events) with schema.fields before sending",
@@ -49,7 +49,8 @@
         "Sets each event's timestamp from created_at",
         "Sends total as a JSON number (converts Postgres numeric strings)",
         "Handles 429 by waiting retry-after and/or paces by the 6,000 events/min budget",
-        "Identifies the contact with external_id (user_id), optionally with email"
+        "Identifies the contact with external_id (user_id), optionally with email",
+        "Sends \"backfill\": true on each historical event so it doesn't trigger automations"
       ]
     },
     {

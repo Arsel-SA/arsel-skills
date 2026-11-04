@@ -1,0 +1,111 @@
+{
+  "skill_name": "arsel",
+  "evals": [
+    {
+      "id": 1,
+      "name": "order-email-stripe-retry",
+      "prompt": "We use Arsel (api.arsel.sa) for email. Write a TypeScript function `sendOrderConfirmation(order)` for our Node backend that emails the customer their order confirmation with the PDF invoice attached (we have it as a Buffer). It's called from our Stripe `payment_intent.succeeded` webhook handler, and Stripe retries webhooks when we time out. Our sending domain is shop.example.com.",
+      "expected_output": "A fetch-based function posting to /v1/email/send with from on the verified domain, from_name, to as an array, base64 attachment, an Idempotency-Key derived from the order id, handling of 202 + id and of errors by name.",
+      "files": [],
+      "expectations": [
+        "Posts to https://api.arsel.sa/v1/email/send",
+        "Sets the required from_name field",
+        "from address is on shop.example.com",
+        "Sends `to` as an array",
+        "Attachment is base64-encoded with a filename",
+        "Sends an Idempotency-Key derived from the order or payment id (not random or time-based)",
+        "Reads the API key from an environment variable; no key hardcoded",
+        "Treats the 202 response as queued (returns/logs the id) rather than claiming delivery"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "whatsapp-otp-sms-fallback",
+      "prompt": "Build a Python (FastAPI) endpoint for phone-number login OTPs for our Saudi users through Arsel. Send the code over WhatsApp first and fall back to SMS if WhatsApp can't deliver it. We already have an approved WhatsApp authentication template called `login_code` in English and Arabic, and our SMS sender name is `MyShop`.",
+      "expected_output": "WhatsApp send by template_name with language and parameters.code, `to` as a single E.164 string; idempotency key per OTP attempt; fallback to SMS on non-retryable WhatsApp failures (400/403/404) and retry on 503/429; SMS uses `content`, `from` sender name, `to` array.",
+      "files": [],
+      "expectations": [
+        "Calls /v1/whatsapp/send with template_name login_code",
+        "Passes the OTP as parameters.code",
+        "Sets language explicitly (en or ar)",
+        "WhatsApp `to` is a single E.164 string, not an array",
+        "Sends an Idempotency-Key on OTP sends",
+        "Retries (or treats as transient) WhatsApp 503/429, and falls back to SMS on deterministic failures like 400/403/404",
+        "SMS call uses POST /v1/sms/send with from MyShop, `content` field and `to` as an array",
+        "Normalizes Saudi numbers to E.164 (+966...)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "order-events-backfill",
+      "prompt": "We just moved to Arsel and want revenue reporting to include our history. We have ~200k past orders in Postgres (table orders: id, user_id, email, total_sar numeric, created_at). Write a Node script that backfills them into Arsel as `order.completed` events so they show up as revenue.",
+      "expected_output": "Defines the event first with schema.fields and a conversion (value_field total, SAR) before sending, since conversions count go-forward; batches of up to 50; reads per-item results; sets timestamp to created_at; numeric total; external_id + email; paces by the 6,000 events/min budget with retry-after on 429; idempotency key per batch.",
+      "files": [],
+      "expectations": [
+        "Defines the order.completed event (POST /v1/events) with schema.fields before sending",
+        "Enables a conversion with value_field total and SAR currency before the backfill",
+        "Sends batches of at most 50 using the {events: [...]} envelope",
+        "Inspects the per-item results array instead of trusting the 202 status",
+        "Sets each event's timestamp from created_at",
+        "Sends total as a JSON number (converts Postgres numeric strings)",
+        "Handles 429 by waiting retry-after and/or paces by the 6,000 events/min budget",
+        "Identifies the contact with external_id (user_id), optionally with email"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "newsletter-40k-cron",
+      "prompt": "Every Monday our Node cron job should send our weekly newsletter (we have the HTML) to our ~40,000 subscribers through Arsel. All subscribers are already contacts in a list called \"Newsletter\". Write the job.",
+      "expected_output": "Uses an email campaign targeting the Newsletter list (template + campaign + send), not a loop over /email/send; puts {{unsubscribe_link}} in the HTML; idempotency key on the campaign send derived from the week; explains why looping /email/send is wrong (50-recipient cap, 1,000 req/min, unsubscribes, analytics).",
+      "files": [],
+      "expectations": [
+        "Creates or uses an email campaign (POST /v1/email/campaigns) targeting the Newsletter list via list_ids, rather than calling /v1/email/send per subscriber",
+        "Does NOT loop over subscribers calling POST /v1/email/send (and does not batch them 50 at a time into /email/send)",
+        "Puts the newsletter HTML in a saved template (POST /v1/templates) and references it with template_id",
+        "Includes {{unsubscribe_link}} in the template HTML, or explicitly explains Arsel appends an unsubscribe footer",
+        "Sends the campaign with POST /v1/email/campaigns/:id/send and an Idempotency-Key derived from the campaign or week (not random or time-of-day)",
+        "Looks up the Newsletter list's id (e.g. GET /v1/lists) instead of hard-coding a guessed id",
+        "Sets from on a verified domain and from_name on the campaign",
+        "Explains at least one concrete reason looping /email/send is wrong (50-recipient cap, 1,000 req/min org budget, unsubscribe handling, campaign analytics)",
+        "Same-week re-run detection compares against the lowercase status values the API returns (draft, scheduled, queued, sending, sent, …) — or compares case-insensitively — so a second run does not create or send a second campaign"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "debug-cart-abandoned-never-fires",
+      "prompt": "Our \"Cart abandoned – reminder\" automation in Arsel has never fired, even though our checkout service sends the event and always gets a 202 back. The code and the event definition are in files/cart-events.ts. What's wrong? Fix the code.",
+      "expected_output": "Diagnoses that undeclared keys (cartTotal, itemCount) are silently accepted so the automation's `total > 100` condition never matches; total is sent as a string; the batch returns 202 even when items fail so results[] must be read; fixes names/types, adds external_id and an idempotency key.",
+      "files": [
+        "files/cart-events.ts"
+      ],
+      "expectations": [
+        "Identifies that cartTotal / itemCount don't match the defined field names total / item_count and that undeclared keys are accepted silently (no error), so the condition total > 100 never matches",
+        "Identifies that total is sent as a string and must be a JSON number for a number field",
+        "Explains that a batch request returns 202 even when individual items fail, and the fix reads results[] per item",
+        "Fixed code sends data with total (number) and item_count matching the definition",
+        "Fixed code checks results[i] for an error instead of trusting the 202 status",
+        "Adds an Idempotency-Key derived from the cart (e.g. cart id), not random or time-based",
+        "Adds external_id (the user id) alongside email",
+        "Does NOT claim the event must be re-defined or that Arsel rejected the payload with 422 (it didn't — it was accepted)"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "push-security-alert-fallback",
+      "prompt": "When someone logs into an account from a new device we must alert the account owner immediately — it's a security requirement. We have Arsel push set up in our mobile app and users are identified with our user id. Write the Python function that sends the alert through Arsel.",
+      "expected_output": "Sends POST /v1/push/send by external_id with title/body; knows push has no transactional exemption (403 when opted out/undeliverable) and a 202 can be a no-device skip, so falls back to email (or SMS); idempotency key per login event; doesn't treat 202 as delivered.",
+      "files": [],
+      "expectations": [
+        "Calls POST /v1/push/send identifying the contact by external_id with title and body",
+        "Handles 403 (opted out of push / no deliverable device) by falling back to email or SMS, because push has no transactional exemption",
+        "Recognises that a 202 can mean the contact had no active device (a successful skip) and does not treat 202 as proof the alert was seen",
+        "Implements or clearly recommends a guaranteed channel (email or SMS) for the security alert rather than relying on push alone",
+        "Sends an Idempotency-Key derived from the login/session event id",
+        "Keeps data_payload values as strings and avoids reserved key prefixes (arsel_, google, gcm)",
+        "Retries 429/5xx with backoff and the same Idempotency-Key, and does not retry 400/403/404/422",
+        "Reads the be_ key from server-side configuration (env/secret), not hard-coded",
+        "Raises or escalates when the guaranteed channel (email/SMS) fails, even if push returned 202"
+      ]
+    }
+  ]
+}

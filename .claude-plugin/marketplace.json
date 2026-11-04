@@ -1,0 +1,16 @@
+{
+  "name": "arsel-skills",
+  "description": "Arsel's agent skills for its API and client SDKs",
+  "owner": {
+    "name": "Arsel",
+    "url": "https://arsel.sa"
+  },
+  "plugins": [
+    {
+      "name": "arsel",
+      "source": "./",
+      "description": "Skills for building on Arsel: the server API and the web, Android and iOS SDKs",
+      "version": "0.1.0"
+    }
+  ]
+}

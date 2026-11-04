@@ -1,0 +1,112 @@
+{
+  "skill_name": "arsel-sdk",
+  "evals": [
+    {
+      "id": 1,
+      "name": "nextjs-web-sdk-with-secret-key",
+      "prompt": "Add Arsel to our Next.js 14 (app router) store. Track product views and add-to-cart, identify users when they log in (we have `user.id` from our auth), handle logout, and enable web push notifications. Our Arsel key is be_7Hq2xV9mK3pL8nR4tY6wZ1aB5cD0eF2g — please wire it in.",
+      "expected_output": "Refuses to put the be_ key in client code and asks for the pub_ client key; client-only init; service worker copied to public/arsel-sw.js and serviceWorkerPath set; promptForPush from a click; identify({ externalId }) once on login; reset() on logout (not optOut); origin allowlist mentioned.",
+      "files": [],
+      "expectations": [
+        "Does not place the be_ key in any client-side code",
+        "Tells the user a publishable pub_ client key is needed instead",
+        "Initializes the SDK only on the client ('use client' and/or useEffect)",
+        "Places the service worker at public/arsel-sw.js and passes serviceWorkerPath",
+        "Requests push permission from a user click, not on page load",
+        "Calls identify({ externalId: user.id }) on login",
+        "Calls reset() on logout and not optOut()",
+        "Mentions registering allowed origins for the client key / web push"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "android-own-fcm-service",
+      "prompt": "Our Android app (Kotlin) already has its own FirebaseMessagingService for our chat notifications. We want to add Arsel for marketing push and event tracking. Users log in with our account id. Show me the integration.",
+      "expected_output": "Adds sa.arsel:push-fcm plus app-owned firebase-messaging; initializes in Application.onCreate with pub_ key; removes ArselPushService via tools:node=remove and forwards onNewToken/onMessageReceived (isArselData/handlePushData)/onDeletedMessages; identify(externalId) on login; reset() on logout; requests POST_NOTIFICATIONS via requestNotificationPermission after a primer.",
+      "files": [],
+      "expectations": [
+        "Adds sa.arsel:push-fcm with firebase-messaging supplied by the app",
+        "Initializes Arsel in Application.onCreate with a pub_ client key",
+        "Removes the SDK's ArselPushService via tools:node=\"remove\" so only one FCM service exists",
+        "Forwards onNewToken to Arsel.setPushToken",
+        "Routes onMessageReceived through Arsel.isArselData / handlePushData, keeping the app's own chat handling",
+        "Calls Arsel.identify(externalId = ...) on login",
+        "Calls Arsel.reset() on logout",
+        "Requests POST_NOTIFICATIONS through Arsel.requestNotificationPermission (API 33+)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "ios-swiftui-logout-push",
+      "prompt": "SwiftUI iOS app: integrate Arsel for push notifications and analytics events. We already use Firebase for Analytics and Crashlytics. When a user taps Log out, they should stop getting that account's notifications.",
+      "expected_output": "Swift package, Arsel.initialize with pub_ key; push via APNs token (setPushToken(apns:)) through a UIApplicationDelegateAdaptor, not the FCM token; .p8 upload; permission requested at a user moment; identify(externalId:) on login; logout calls reset() — not optOut() — explaining reset moves the subscription off the account.",
+      "files": [],
+      "expectations": [
+        "Adds the arsel-ios-sdk Swift package",
+        "Calls Arsel.initialize with a pub_ client key",
+        "Uses UIApplicationDelegateAdaptor to receive the APNs token in SwiftUI",
+        "Passes the raw APNs Data to Arsel.setPushToken(apns:), not the FCM token",
+        "Requests notification permission from a user action rather than at launch",
+        "Calls Arsel.identify(externalId:) on login",
+        "Logout calls Arsel.reset(), not optOut()",
+        "Mentions uploading the APNs .p8 key (Key ID, Team ID, bundle ID) to Arsel"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "vite-pwa-existing-service-worker",
+      "prompt": "Our React app is a PWA built with Vite + vite-plugin-pwa (Workbox). We want to add Arsel web push and event tracking. We're on shop.example.com and www.shop.example.com, with staging at staging.shop.example.com.",
+      "expected_output": "Doesn't register a second service worker; merges arsel-sw.js into the Workbox worker via importScripts (injectManifest or workbox.importScripts) and inits with serviceWorker: 'external'; copies arsel-sw.js to public/; registers all three origins plus localhost; prompts from a click.",
+      "files": [],
+      "expectations": [
+        "Does NOT register a second service worker at the same scope as the Workbox one",
+        "Merges Arsel into the existing worker with importScripts('/arsel-sw.js') (via injectManifest or Workbox's importScripts option)",
+        "Initialises the SDK with serviceWorker: 'external' instead of serviceWorkerPath",
+        "Serves arsel-sw.js from the site root as a static file matching the installed SDK version (copied into public/ or emitted by the build), not bundled via import",
+        "Tells the user to allowlist shop.example.com, www.shop.example.com and staging.shop.example.com (separately) plus the local dev origin",
+        "Calls promptForPush() from a user gesture, not on load",
+        "Uses a pub_ client key, never a be_ key, in the app",
+        "Calls identify({ externalId }) on login and reset() on logout",
+        "Installs web SDK 1.3.1 or later (or, if pinned to 1.3.0, discloses that its reset() does not move the push subscription off the logged-out user)",
+        "Does not claim Arsel's service worker ignores the app's own notifications (its notificationclick handler acts on every notification)"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "shared-tablet-logout-android",
+      "prompt": "We make an Android (Kotlin) app for restaurant staff. Several waiters share one tablet and log in and out during a shift. We're adding Arsel 1.3.1 (`sa.arsel:push-fcm:1.3.1`) for shift reminders by push. Each waiter must only ever get their own pushes on whichever tablet they're logged into. Show the login/logout integration.",
+      "expected_output": "identify(externalId) on login, reset() on logout; knows 1.3.1's reset() doesn't rebind the subscription and adds registerNow() (or upgrade / server-side binding); never optOut(); handles a login over an existing session.",
+      "files": [],
+      "expectations": [
+        "Calls Arsel.identify(externalId = <waiter id>) on login",
+        "Calls Arsel.reset() on logout",
+        "Never calls optOut() on logout and explains why",
+        "Flags that on 1.3.1 reset() does not rebind the push subscription and calls Arsel.registerNow() after reset() (or requires a version with the fix)",
+        "Handles a different waiter logging in without the previous one logging out (reset before identify)",
+        "Initialises Arsel in Application.onCreate with a pub_ client key",
+        "If it replaces the SDK's FCM service, calls handlePushData first and does not gate on isArselData",
+        "Does not claim pushes are delivered to a device token directly (push targets the contact)",
+        "Does not re-run reset()/registerNow() on a later app start after a different waiter has logged in (no stale logout-pending state)"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "clevertap-migration-keep-subscribers",
+      "prompt": "We're moving from CleverTap to Arsel for our iOS app and our website. We have ~300k iOS push users and ~80k web push subscribers in CleverTap and we can't lose them. CleverTap identifies users by their CleverTap ID; our own users table has a numeric id. Plan the migration and write what code is needed.",
+      "expected_output": "iOS: export APNs tokens (CleverTap holds real APNs tokens) and bulk import 1,000 per call omitting sdk_version, with apns_environment for sandbox tokens, poll jobs; identify with own user id not CleverTap id; ship SDK build which adopts imported devices. Web: subscribers survive only if CleverTap's VAPID keypair (incl. private key) is imported when first provisioning Web Push; otherwise they're lost and won't be re-prompted.",
+      "files": [],
+      "expectations": [
+        "Uses the app's own numeric user id as externalId / external_id, not the CleverTap ID",
+        "Imports iOS tokens server-side with POST /v1/push/devices/bulk in chunks of at most 1,000",
+        "Omits sdk_version on imported devices (so the SDK later adopts them)",
+        "Imports development-build tokens with apns_environment: \"sandbox\", or explicitly excludes them with a reason (not silently imported as production)",
+        "Polls the import job (GET /v1/push/imports/:job_id) and reconciles per-row errors",
+        "States that web subscribers survive only if the existing VAPID keypair (public + private) is imported when Web Push is first provisioned in Arsel",
+        "Explains what happens without the old VAPID keypair: existing subscriptions can't be sent to, but browsers that already granted permission re-subscribe silently when they next visit (no re-prompt) — so reach rebuilds only as users return",
+        "Notes imported devices report no delivery/engagement metrics until the app ships the Arsel SDK",
+        "Imports or creates the contacts before importing devices (a device import never creates a contact; rows fail CONTACT_NOT_FOUND)",
+        "Installs web SDK 1.3.1 or later (or, if pinned to 1.3.0, discloses that its reset() does not move the push subscription off the logged-out user)"
+      ]
+    }
+  ]
+}

@@ -9,5 +9,6 @@
   "homepage": "https://docs.arsel.sa",
   "repository": "https://github.com/Arsel-SA/arsel-skills",
   "license": "MIT",
-  "keywords": ["arsel", "email", "sms", "whatsapp", "push", "events", "sdk", "arabic", "saudi-arabia"]
+  "keywords": ["arsel", "email", "sms", "whatsapp", "push", "events", "sdk", "arabic", "saudi-arabia"],
+  "icon": "./assets/logo.svg"
 }

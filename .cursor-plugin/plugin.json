@@ -1,0 +1,14 @@
+{
+  "name": "arsel",
+  "displayName": "Arsel",
+  "version": "0.2.0",
+  "description": "Write correct Arsel integrations: transactional email, SMS, WhatsApp and push, events and automations, contacts and campaigns through the API, and client tracking and push through the web, Android and iOS SDKs.",
+  "author": {
+    "name": "Arsel"
+  },
+  "homepage": "https://docs.arsel.sa",
+  "repository": "https://github.com/Arsel-SA/arsel-skills",
+  "license": "MIT",
+  "keywords": ["arsel", "email", "sms", "whatsapp", "push", "events", "sdk", "arabic", "saudi-arabia"],
+  "logo": "assets/logo.svg"
+}

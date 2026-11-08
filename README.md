@@ -19,6 +19,18 @@ Each skill is a short `SKILL.md` plus reference files the agent reads only when 
 /plugin install arsel@arsel-skills
 ```
 
+**Cursor**
+
+Install **Arsel** from the [Cursor Marketplace](https://cursor.com/marketplace), or clone this repo into `~/.cursor/plugins/local/arsel`.
+
+**Codex**
+
+```
+codex plugin marketplace add Arsel-SA/arsel-skills
+```
+
+Then install **Arsel** from the Plugins Directory.
+
 **Other agents**
 
 Copy the folders under `skills/` into the directory your agent loads skills from, such as `.claude/skills/` in a project.

@@ -1,0 +1,33 @@
+{
+  "name": "arsel",
+  "version": "0.2.0",
+  "description": "Write correct Arsel integrations: transactional email, SMS, WhatsApp and push, events and automations, contacts and campaigns through the API, and client tracking and push through the web, Android and iOS SDKs.",
+  "author": {
+    "name": "Arsel",
+    "url": "https://arsel.sa"
+  },
+  "homepage": "https://docs.arsel.sa",
+  "repository": "https://github.com/Arsel-SA/arsel-skills",
+  "license": "MIT",
+  "keywords": ["arsel", "email", "sms", "whatsapp", "push", "events", "sdk", "arabic", "saudi-arabia"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arsel",
+    "shortDescription": "Build on Arsel's API and SDKs, and write the messages",
+    "longDescription": "Skills for Arsel, the marketing engagement platform for Saudi Arabia. They cover server-side sends of transactional email, SMS, WhatsApp and push; events that trigger automations; contacts, segments and campaigns; the web, Android and iOS SDKs for tracking and push; and writing email, SMS and WhatsApp content in Arabic and English.",
+    "developerName": "Arsel",
+    "category": "Developer Tools",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://arsel.sa",
+    "privacyPolicyURL": "https://arsel.sa/en/privacy",
+    "termsOfServiceURL": "https://arsel.sa/en/terms",
+    "defaultPrompt": [
+      "Send an order confirmation email and SMS through Arsel",
+      "Add the Arsel web SDK and identify users on login",
+      "Write an Arabic WhatsApp template that Meta will approve"
+    ],
+    "brandColor": "#004948",
+    "logo": "./assets/logo.svg",
+    "composerIcon": "./assets/logo.svg"
+  }
+}

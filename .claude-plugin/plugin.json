@@ -1,14 +1,15 @@
 {
   "name": "arsel",
-  "version": "0.2.0",
-  "description": "Write correct Arsel integrations: transactional email, SMS, WhatsApp and push, events and automations, contacts and campaigns through the API, and client tracking and push through the web, Android and iOS SDKs.",
+  "version": "0.3.0",
+  "description": "Work with Arsel from your agent: read contacts, segments, campaigns and their stats through the Arsel MCP server, and write correct integrations for transactional email, SMS, WhatsApp and push, events and automations, and the web, Android and iOS SDKs.",
   "author": {
     "name": "Arsel",
     "url": "https://arsel.sa"
   },
   "homepage": "https://docs.arsel.sa",
+  "privacyPolicyUrl": "https://arsel.sa/en/privacy",
   "repository": "https://github.com/Arsel-SA/arsel-skills",
   "license": "MIT",
-  "keywords": ["arsel", "email", "sms", "whatsapp", "push", "events", "sdk", "arabic", "saudi-arabia"],
+  "keywords": ["arsel", "mcp", "email", "sms", "whatsapp", "push", "events", "sdk", "arabic", "saudi-arabia"],
   "icon": "./assets/logo.svg"
 }

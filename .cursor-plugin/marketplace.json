@@ -10,7 +10,7 @@
     {
       "name": "arsel",
       "source": "./",
-      "description": "Skills for building on Arsel: the server API and the web, Android and iOS SDKs"
+      "description": "The Arsel MCP server plus skills for the API and the web, Android and iOS SDKs"
     }
   ]
 }

@@ -1,6 +1,12 @@
 # Arsel skills
 
-[Agent skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview) that help coding agents write correct [Arsel](https://arsel.sa) integrations.
+The Arsel plugin for Claude Code, Cursor and Codex: the [Arsel MCP server](https://docs.arsel.sa/ai/mcp) plus [agent skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview) that help coding agents write correct [Arsel](https://arsel.sa) integrations.
+
+## MCP server
+
+The plugin connects `https://mcp.arsel.sa/mcp` (see [`.mcp.json`](.mcp.json)). Connecting opens an Arsel sign-in, where an organization admin approves the connection. The server reads and updates contacts, lists, segments, templates, campaigns and automations and reports campaign stats. It cannot send a message, start a campaign or enable an automation. The tool list and the API-key alternative are in the [MCP docs](https://docs.arsel.sa/ai/mcp); the source is [Arsel-SA/arsel-mcp](https://github.com/Arsel-SA/arsel-mcp).
+
+## Skills
 
 | Skill | Use it for |
 | --- | --- |

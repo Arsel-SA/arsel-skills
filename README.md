@@ -4,7 +4,7 @@ The Arsel plugin for Claude Code, Cursor and Codex: the [Arsel MCP server](https
 
 ## MCP server
 
-The plugin connects `https://mcp.arsel.sa/mcp` (see [`.mcp.json`](.mcp.json)). Connecting opens an Arsel sign-in, where an organization admin approves the connection. The server reads and updates contacts, lists, segments, templates, campaigns and automations and reports campaign stats. It cannot send a message, start a campaign or enable an automation. The tool list and the API-key alternative are in the [MCP docs](https://docs.arsel.sa/ai/mcp); the source is [Arsel-SA/arsel-mcp](https://github.com/Arsel-SA/arsel-mcp).
+The plugin connects `https://mcp.arsel.sa/mcp` (see [`.mcp.json`](.mcp.json)). Connecting opens an Arsel sign-in, where an organization admin approves the connection. The server reads and updates contacts, lists, segments, templates, campaigns and automations, reports campaign stats, and sends: transactional email, SMS, WhatsApp and push, campaigns now or on a schedule, and events that start automations. Your client asks you to approve every send. It cannot turn an automation on or off; you do that from the Arsel dashboard. The tool list and the API-key alternative are in the [MCP docs](https://docs.arsel.sa/ai/mcp); the source is [Arsel-SA/arsel-mcp](https://github.com/Arsel-SA/arsel-mcp).
 
 ## Skills
 

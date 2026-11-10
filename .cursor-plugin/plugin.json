@@ -2,7 +2,7 @@
   "name": "arsel",
   "displayName": "Arsel",
   "version": "0.3.0",
-  "description": "Work with Arsel from your agent: read contacts, segments, campaigns and their stats through the Arsel MCP server, and write correct integrations for transactional email, SMS, WhatsApp and push, events and automations, and the web, Android and iOS SDKs.",
+  "description": "Work with Arsel from your agent: manage contacts, segments and campaigns, send messages and campaigns, and read their stats through the Arsel MCP server, and write correct integrations for transactional email, SMS, WhatsApp and push, events and automations, and the web, Android and iOS SDKs.",
   "author": {
     "name": "Arsel"
   },
